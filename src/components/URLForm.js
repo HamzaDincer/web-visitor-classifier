@@ -6,8 +6,19 @@ const URLForm = () => {
   const [url, setUrl] = useState("");
   const dispatch = useDispatch();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
+      const response = await fetch("http://127.0.0.1:5000/submit-url", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url }),
+      });
+      const data = await response.json();
+      console.log("Response from backend:", data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
     dispatch(submitUrl(url));
     setUrl("");
   };
