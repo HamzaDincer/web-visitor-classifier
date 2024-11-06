@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { submitUrl } from "../redux/actions";
+import { submitUrl, storeQuestions } from "../redux/actions";
 
 const URLForm = () => {
   const [url, setUrl] = useState("");
@@ -15,7 +15,8 @@ const URLForm = () => {
         body: JSON.stringify({ url }),
       });
       const data = await response.json();
-      console.log("Response from backend:", data);
+
+      dispatch(storeQuestions(data.questions));
     } catch (error) {
       console.error("Error:", error);
     }

@@ -1,10 +1,12 @@
 import React from "react";
-import URLInputForm from "./components/URLForm.js";
+import URLForm from "./components/URLForm";
+import Questionnaire from "./components/Questionnaire";
 
 function App() {
   return (
     <div className="App">
-      <URLInputForm />
+      <URLForm />
+      <Questionnaire />
     </div>
   );
 }
