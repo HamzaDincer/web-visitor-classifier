@@ -46,7 +46,7 @@ def generate_questions_and_choices(content):
     ]
     """
     try:
-        # Call OpenAI GPT-4 API
+
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
@@ -55,7 +55,6 @@ def generate_questions_and_choices(content):
             temperature=0.5,
         )
 
-        # Access the content of the first message
         content = response.choices[0].message.content
         return json.loads(content) 
     except Exception as e:
@@ -89,6 +88,43 @@ def submit_url():
         "title": title,
         "questions_and_choices": questions_and_choices
     }), 200
+
+@app.route('/profile-visitor', methods=['POST'])
+
+def profile_visitor():
+    data = request.get_json()
+    responses = data.get('responses')
+
+    if not responses:
+        return jsonify({"error": "No responses provided"}), 400
+    
+
+    formatted_responses = "\n".join(
+    [f"Q{i + 1}: {responses[str(i)]}" for i in sorted(map(int, responses.keys()))]
+    )
+
+
+    prompt = f"""
+    Based on the following answers to classification questions, determine the visitor's profile. Provide a concise result.
+
+    Answers:
+    {formatted_responses}
+
+    Respond with just the profile name.
+    """
+
+    try:
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.7,
+        )
+
+        profile = response.choices[0].message.content.strip()
+        return jsonify({"profile": profile}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)
